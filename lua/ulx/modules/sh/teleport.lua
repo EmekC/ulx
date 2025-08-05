@@ -76,23 +76,23 @@ function ulx.bring( calling_ply, target_plys )
 	local cell_size = 50 -- Constance spacing value
 
   if not calling_ply:IsValid() then
-    Msg( "If you brought someone to you, they would instantly be destroyed by the awesomeness that is console.\n" )
-    return
+	Msg( "If you brought someone to you, they would instantly be destroyed by the awesomeness that is console.\n" )
+	return
   end
 
   if ulx.getExclusive( calling_ply, calling_ply ) then
-    ULib.tsayError( calling_ply, ulx.getExclusive( calling_ply, calling_ply ), true )
-    return
+	ULib.tsayError( calling_ply, ulx.getExclusive( calling_ply, calling_ply ), true )
+	return
   end
 
   if not calling_ply:Alive() then
-    ULib.tsayError( calling_ply, "You are dead!", true )
-    return
+	ULib.tsayError( calling_ply, "You are dead!", true )
+	return
   end
 
   if calling_ply:InVehicle() then
-    ULib.tsayError( calling_ply, "Please leave the vehicle first!", true )
-    return
+	ULib.tsayError( calling_ply, "Please leave the vehicle first!", true )
+	return
   end
 
 	local t = {
@@ -103,21 +103,21 @@ function ulx.bring( calling_ply, target_plys )
 	local tr = util.TraceEntity( t, calling_ply )
 
   if tr.Hit then
-    ULib.tsayError( calling_ply, "Can't teleport when you're inside the world!", true )
-    return
+	ULib.tsayError( calling_ply, "Can't teleport when you're inside the world!", true )
+	return
   end
 
   local teleportable_plys = {}
 
   for i=1, #target_plys do
-    local v = target_plys[ i ]
-    if ulx.getExclusive( v, calling_ply ) then
-      ULib.tsayError( calling_ply, ulx.getExclusive( v, calling_ply ), true )
-    elseif not v:Alive() then
-      ULib.tsayError( calling_ply, v:Nick() .. " is dead!", true )
-    else
-      table.insert( teleportable_plys, v )
-    end
+	local v = target_plys[ i ]
+	if ulx.getExclusive( v, calling_ply ) then
+	  ULib.tsayError( calling_ply, ulx.getExclusive( v, calling_ply ), true )
+	elseif not v:Alive() then
+	  ULib.tsayError( calling_ply, v:Nick() .. " is dead!", true )
+	else
+	  table.insert( teleportable_plys, v )
+	end
   end
 	local players_involved = table.Copy( teleportable_plys )
 	table.insert( players_involved, calling_ply )
@@ -127,7 +127,7 @@ function ulx.bring( calling_ply, target_plys )
   for i=1, #tpGrid do
 		local c = tpGrid[i][1]
 		local r = tpGrid[i][2]
-    local target = table.remove( teleportable_plys )
+	local target = table.remove( teleportable_plys )
 		if not target then break end
 
 		local yawForward = calling_ply:EyeAngles().yaw
@@ -140,21 +140,21 @@ function ulx.bring( calling_ply, target_plys )
 		t.endpos = t.start + offset
 		local tr = util.TraceEntity( t, target )
 
-    if tr.Hit then
-      table.insert( teleportable_plys, target )
-    else
-      if target:InVehicle() then target:ExitVehicle() end
+	if tr.Hit then
+	  table.insert( teleportable_plys, target )
+	else
+	  if target:InVehicle() then target:ExitVehicle() end
 			target.ulx_prevpos = target:GetPos()
 			target.ulx_prevang = target:EyeAngles()
-      target:SetPos( t.endpos )
-      target:SetEyeAngles( (calling_ply:GetPos() - t.endpos):Angle() )
-      target:SetLocalVelocity( Vector( 0, 0, 0 ) )
-      table.insert( affected_plys, target )
-    end
+	  target:SetPos( t.endpos )
+	  target:SetEyeAngles( (calling_ply:GetPos() - t.endpos):Angle() )
+	  target:SetLocalVelocity( Vector( 0, 0, 0 ) )
+	  table.insert( affected_plys, target )
+	end
   end
 
   if #teleportable_plys > 0 then
-    ULib.tsayError( calling_ply, "Not enough free space to bring everyone!", true )
+	ULib.tsayError( calling_ply, "Not enough free space to bring everyone!", true )
   end
 
 	if #affected_plys > 0 then
@@ -214,6 +214,32 @@ local goto = ulx.command( CATEGORY_NAME, "ulx goto", ulx.goto, "!goto" )
 goto:addParam{ type=ULib.cmds.PlayerArg, target="!^", ULib.cmds.ignoreCanTarget }
 goto:defaultAccess( ULib.ACCESS_ADMIN )
 goto:help( "Goto target." )
+
+---Move player to x,y,z coordinates
+---@param calling_ply Player
+---@param x integer
+---@param y integer
+---@param z integer
+function ulx.topos(calling_ply, x, y ,z)
+	if not calling_ply:IsPlayer() then 
+		print("Something's wrong, are you calling from console? (¬‿¬)")
+		return
+	end
+
+	if not calling_ply:Alive() then
+		ULib.tsayError( calling_ply, "You can't, you're dead!", true )
+		return
+	end
+
+	calling_ply:SetPos(Vector(x,y,z))
+	ulx.fancyLogAdmin(calling_ply, "#A Teleported to position #N #N #N",x,y,z)
+end
+local topos = ulx.command( CATEGORY_NAME, 'ulx topos', ulx.topos, '!topos')
+topos:addParam{type=ULib.cmds.NumArg}
+topos:addParam{type=ULib.cmds.NumArg}
+topos:addParam{type=ULib.cmds.NumArg}
+topos:defaultAccess(ULib.ACCESS_ADMIN)
+topos:help("Go to position x y z")
 
 function ulx.send( calling_ply, target_from, target_to )
 	if target_from == target_to then

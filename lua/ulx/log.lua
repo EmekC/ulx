@@ -475,6 +475,10 @@ function ulx.fancyLogAdmin( calling_ply, format, ... )
 				table.Add( playerStrs[ i ], makePlayerList( calling_ply, arg, players[ i ], use_self_suffix, specifier == "A" ) )
 			end
 			use_self_suffix = true
+		--- #N Number argument
+		elseif specifier == "N" and isnumber(arg) then
+			insertToAll(playerStrs, misc_color)
+			insertToAll(playerStrs, tostring(arg))
 		else
 			insertToAll( playerStrs, misc_color )
 			insertToAll( playerStrs, string.format( "%" .. tag, arg ) )
@@ -512,6 +516,8 @@ function ulx.fancyLogAdmin( calling_ply, format, ... )
 			end
 		end
 	end
+
+	PrintTable(playerStrs)
 end
 
 function ulx.fancyLog( format, ... )
