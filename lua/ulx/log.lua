@@ -516,8 +516,6 @@ function ulx.fancyLogAdmin( calling_ply, format, ... )
 			end
 		end
 	end
-
-	PrintTable(playerStrs)
 end
 
 function ulx.fancyLog( format, ... )
